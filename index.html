@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>おくすり かめらはんてい</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg"></div>
+<video id="video" playsinline muted></video>
+<canvas id="canvas"></canvas>
+<div class="overlay"></div>
+
+<div id="cover" class="screen show">
+  <div class="card">
+    <div class="emojiRow">💊 🌟 🥤</div>
+    <h1>おくすり</h1>
+    <p>おとなのひとと いっしょに<br>じゅんばんに やってみよう！</p>
+    <button class="btn start" id="toMode">はじめる</button>
+    <div class="notice">おくすりは、かならず おとなのひとが かくにんしてね。</div>
+    <p class="small">※ かめらの えいぞうは ほぞんされません</p>
+  </div>
+</div>
+
+<div id="mode" class="screen">
+  <div class="card">
+    <h2>もーどを えらんでね</h2>
+    <button class="btn normal" data-mode="normal">🌟 つうじょうばん</button>
+    <button class="btn care" data-mode="care">🌿 はいりょばん</button>
+    <p class="small">はいりょばんは、ゆっくり・やさしいおとです</p>
+  </div>
+</div>
+
+<div id="permission" class="screen">
+  <div class="card">
+    <h2>かめらを つかうよ</h2>
+    <p>「きょか」を おしてね。<br>うでや からだが うつるように してね。</p>
+    <button class="btn start" id="startCamera">📷 かめらを つける</button>
+    <p class="small">かめらは さいごまで おんのままです</p>
+  </div>
+</div>
+
+<div id="play">
+  <div class="topbar">
+    <div class="step" id="stepText">1 / 5</div>
+    <button class="iconbtn" id="soundBtn">🔊</button>
+  </div>
+  <div id="hint">からだを かめらに うつしてね</div>
+  <div id="demoBadge">おてほんを みてね</div>
+  <div id="countdown">3</div>
+  <div class="instruction">
+    <div class="bigemoji" id="emoji">🧼</div>
+    <div class="main" id="mainText">てを きれいに しよう</div>
+    <div class="sub" id="subText">てを ごしごし する まね</div>
+  </div>
+  <div class="progressWrap"><div id="progress"></div></div>
+</div>
+
+<div id="finish" class="screen">
+  <div class="card">
+    <div id="finishStars">✨💊✨</div>
+    <h1>できた！</h1>
+    <p>じゅんばんに<br>できたね！</p>
+    <div class="notice">ほんとうに のめたかは、おとなのひとが かくにんしてね。</div>
+    <button class="btn start" id="again">もういちど</button>
+  </div>
+</div>
+
+<div id="loading">
+  <div class="loader">
+    <div class="pulse">🌟</div>
+    <p>かめらを じゅんびしているよ</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
