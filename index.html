@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>おくすり おんがくあそび</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg"></div>
+  <video id="video" playsinline muted></video>
+  <canvas id="canvas"></canvas>
+  <div class="overlay"></div>
+
+  <section id="cover" class="screen show">
+    <div class="card">
+      <div class="emojiRow">💊 🎵 🌟</div>
+      <h1>おくすり<br>おんがくあそび</h1>
+      <p>おとに あわせて からだを うごかしながら<br>おくすりの じゅんびを してみよう！</p>
+      <button class="btn start" id="toMode">はじめる</button>
+      <div class="notice">おくすりは、かならず おとなのひとが かくにんしてね。</div>
+      <p class="small">※ かめらの えいぞうは ほぞんされません</p>
+    </div>
+  </section>
+
+  <section id="mode" class="screen">
+    <div class="card">
+      <h2>もーどを えらんでね</h2>
+      <button class="btn normal" data-mode="normal">🌟 つうじょうばん</button>
+      <button class="btn care" data-mode="care">🌿 はいりょばん</button>
+      <p class="small">はいりょばんは、すきな じゅんばんを えらべます。</p>
+    </div>
+  </section>
+
+  <section id="permission" class="screen">
+    <div class="card">
+      <h2>かめらを つかうよ</h2>
+      <p>「きょか」を おしてね。<br>うでや からだが うつるように してね。</p>
+      <button class="btn start" id="startCamera">📷 かめらを つける</button>
+      <p class="small">かめらは さいごまで おんのままです</p>
+    </div>
+  </section>
+
+  <section id="selectScreen" class="screen">
+    <div class="card">
+      <h2>どれから やる？</h2>
+      <div id="stars" class="stars">☆☆☆☆☆</div>
+      <p id="remainingText">あと 5こ</p>
+      <div id="stepChoices" class="choices"></div>
+    </div>
+  </section>
+
+  <main id="play">
+    <div class="topbar">
+      <div class="step" id="stepText">1 / 5</div>
+      <button class="iconbtn" id="soundBtn" aria-label="おとのオンオフ">🔊</button>
+    </div>
+
+    <div id="hint">からだを かめらに うつしてね</div>
+    <div id="musicBadge">🎵 おとを きいてね</div>
+    <div id="countdown">3</div>
+
+    <div class="instruction">
+      <div class="bigemoji" id="emoji">🧼</div>
+      <div class="main" id="mainText">てを きれいに しよう</div>
+      <div class="sub" id="subText">ごしごしの リズムで うごこう</div>
+      <div class="rhythm" id="rhythmText">タン・タン・タン・タン</div>
+    </div>
+
+    <div class="progressWrap">
+      <div id="progress"></div>
+    </div>
+
+    <button id="nextBtn" class="nextBtn">つぎへ ➜</button>
+  </main>
+
+  <section id="finish" class="screen">
+    <div class="card">
+      <div id="finishStars">✨🎵💊🎵✨</div>
+      <h1>ぜんぶ できた！</h1>
+      <p>おとに あわせて<br>たのしく できたね！</p>
+      <div class="notice">ほんとうに のめたかは、おとなのひとが かくにんしてね。</div>
+      <button class="btn start" id="again">もういちど</button>
+    </div>
+  </section>
+
+  <div id="loading">
+    <div class="loader">
+      <div class="pulse">🌟</div>
+      <p>かめらを じゅんびしているよ</p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
