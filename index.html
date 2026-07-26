@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>おくすり おんがくあそび</title>
+  <title>おくすり やさしいオルゴール</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,20 +16,20 @@
     <div class="card">
       <div class="emojiRow">💊 🎵 🌟</div>
       <h1>おくすり<br>おんがくあそび</h1>
-      <p>やさしい おとを ききながら<br>おとなのひとと あんぜんに すすめよう！</p>
+      <p>やさしい オルゴールを ききながら<br>おとなのひとと あんぜんに すすめよう！</p>
       <button class="btn start" id="toMode">はじめる</button>
       <div class="notice">おくすりの なまえ・りょう・じかんは、かならず おとなのひとが かくにんしてね。</div>
       <div class="safetyBox">⚠️ おくすりを あめや おかしのように あつかわないでね</div>
-      <p class="small">※ かめらの えいぞうは ほぞんされません</p>
+      <p class="small">※ かめらの えいぞうは ほぞんされません<br>※ おとは ひかえめな おんりょうです</p>
     </div>
   </section>
 
   <section id="mode" class="screen">
     <div class="card">
       <h2>もーどを えらんでね</h2>
-      <button class="btn normal" data-mode="normal">🌟 つうじょうばん</button>
-      <button class="btn care" data-mode="care">🌿 はいりょばん</button>
-      <p class="small">はいりょばんは、すきな じゅんばんを えらべます。</p>
+      <button class="btn normal" data-mode="normal">🌟 つうじょうばん（じゆうに えらぶ）</button>
+      <button class="btn care" data-mode="care">🌿 はいりょばん（みとおしつき）</button>
+      <p class="small">どちらも、すきな じゅんばんを えらべます。<br>はいりょばんは、これからの ながれが みえます。</p>
     </div>
   </section>
 
@@ -44,7 +44,12 @@
 
   <section id="selectScreen" class="screen">
     <div class="card">
-      <h2>どれから やる？</h2>
+      <h2 id="selectTitle">どれから やる？</h2>
+      <div id="careForecast" class="forecastBox" hidden>
+        <div class="forecastTitle">🌿 これから すること</div>
+        <div id="forecastList" class="forecastList"></div>
+        <div id="currentGuide" class="currentGuide">① すきな こうていを えらぶ</div>
+      </div>
       <div id="stars" class="stars">☆☆☆☆☆</div>
       <p id="remainingText">あと 5こ</p>
       <div id="stepChoices" class="choices"></div>
@@ -59,7 +64,7 @@
 
     <div id="hint">からだを かめらに うつしてね</div>
     <div class="safeBadge" id="safeBadge">📷 かめらは さんかの うごきだけを みます</div>
-    <div id="musicBadge">🎵 おとを きいてね</div>
+    <div id="musicBadge">🎵 やさしい オルゴール</div>
     <div id="countdown">3</div>
 
     <div class="instruction">
@@ -73,7 +78,7 @@
       <div id="progress"></div>
     </div>
 
-    <button id="nextBtn" class="nextBtn">つぎへ ➜</button>
+    <button id="nextBtn" class="nextBtn">こうていを えらぶ ➜</button>
   </main>
 
   <section id="finish" class="screen">

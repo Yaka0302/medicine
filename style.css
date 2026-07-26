@@ -159,3 +159,31 @@ p{font-size:clamp(18px,4.5vw,27px);line-height:1.55}
   position:absolute;left:50%;transform:translateX(-50%);top:176px;z-index:8;
   white-space:nowrap;box-shadow:0 5px 16px rgba(0,0,0,.10)
 }
+
+/* 安心感のあるオルゴール版 */
+#musicBadge{
+  background:rgba(245,242,255,.95);
+  border:2px solid rgba(220,214,245,.85);
+}
+
+.forecastBox{
+  margin:10px 0 16px;padding:14px;border-radius:22px;
+  background:linear-gradient(135deg,#effaf4,#edf7ff);
+  border:3px solid white;box-shadow:0 7px 20px rgba(0,0,0,.08);
+  text-align:left
+}
+.forecastTitle{
+  font-size:clamp(18px,4.5vw,25px);font-weight:900;text-align:center;margin-bottom:10px
+}
+.forecastList{display:grid;gap:7px}
+.forecastItem{
+  display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:14px;
+  background:rgba(255,255,255,.86);font-size:clamp(15px,3.8vw,20px);font-weight:800
+}
+.forecastItem.done{opacity:.62;background:#e8f7e9}
+.forecastItem.current{outline:3px solid #ffd986;background:#fff9dc}
+.currentGuide{
+  margin-top:10px;padding:9px;border-radius:14px;background:#fff7cc;
+  text-align:center;font-size:clamp(15px,3.8vw,20px);font-weight:900
+}
+.choice.currentChoice{outline:4px solid #ffd36e}

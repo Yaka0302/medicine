@@ -65,21 +65,45 @@ function initAudio(){
   if(audioCtx.state === "suspended") audioCtx.resume();
 }
 
-function tone(freq, duration=.18, volume=.03, type="sine", delay=0){
+function tone(freq, duration=.9, volume=.02, type="sine", delay=0){
   if(!soundOn || !freq) return;
   initAudio();
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = type;
-  osc.frequency.value = freq;
+
   const start = audioCtx.currentTime + delay;
+  const osc1 = audioCtx.createOscillator();
+  const osc2 = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  const filter = audioCtx.createBiquadFilter();
+
+  osc1.type = "sine";
+  osc1.frequency.value = freq;
+
+  osc2.type = "sine";
+  osc2.frequency.value = freq * 2;
+  osc2.detune.value = -5;
+
+  filter.type = "lowpass";
+  filter.frequency.value = selectedMode === "care" ? 1350 : 1650;
+  filter.Q.value = 0.5;
+
   gain.gain.setValueAtTime(.0001, start);
-  gain.gain.exponentialRampToValueAtTime(volume, start + .02);
+  gain.gain.exponentialRampToValueAtTime(volume, start + .018);
+  gain.gain.exponentialRampToValueAtTime(volume * .35, start + .16);
   gain.gain.exponentialRampToValueAtTime(.0001, start + duration);
-  osc.connect(gain);
+
+  const overtoneGain = audioCtx.createGain();
+  overtoneGain.gain.value = selectedMode === "care" ? 0.08 : 0.12;
+
+  osc1.connect(filter);
+  osc2.connect(overtoneGain);
+  overtoneGain.connect(filter);
+  filter.connect(gain);
   gain.connect(audioCtx.destination);
-  osc.start(start);
-  osc.stop(start + duration + .05);
+
+  osc1.start(start);
+  osc2.start(start);
+  osc1.stop(start + duration + .05);
+  osc2.stop(start + duration + .05);
 }
 
 function playNotes(notes, gap=.55){
@@ -91,15 +115,31 @@ function playNotes(notes, gap=.55){
 function startBgm(){
   stopBgm();
   if(!soundOn) return;
-  const notes = selectedMode==="care"
-    ? [261.63,329.63,392]
-    : [392,440,523.25,440];
-  let i=0;
-  const ms = selectedMode==="care" ? 1700 : 1250;
-  bgmTimer = setInterval(()=>{
-    tone(notes[i%notes.length],.32,selectedMode==="care"?.012:.018);
+
+  // Cメジャー中心、低めの音域で安心感を重視
+  const melodyNormal = [261.63,329.63,392.00,329.63,293.66,349.23,392.00,329.63];
+  const melodyCare   = [261.63,null,329.63,null,392.00,null,329.63,null];
+  const melody = selectedMode === "care" ? melodyCare : melodyNormal;
+
+  let i = 0;
+  const ms = selectedMode === "care" ? 1900 : 1450;
+
+  const playOne = ()=>{
+    const note = melody[i % melody.length];
+    if(note){
+      tone(note, selectedMode === "care" ? 1.5 : 1.15,
+           selectedMode === "care" ? .010 : .014, "sine");
+      // ごく小さな低音を添える
+      if(i % 2 === 0){
+        tone(note / 2, selectedMode === "care" ? 1.7 : 1.3,
+             selectedMode === "care" ? .004 : .006, "sine", .03);
+      }
+    }
     i++;
-  },ms);
+  };
+
+  playOne();
+  bgmTimer = setInterval(playOne, ms);
 }
 
 function stopBgm(){
@@ -124,13 +164,13 @@ function speak(text){
 function kiran(){
   if(!soundOn) return;
   initAudio();
-  tone(880,.5,.06,"triangle",0);
-  tone(1320,.55,.045,"sine",.12);
-  tone(1760,.65,.035,"sine",.24);
+  tone(523,.8,.025,"sine",0);
+  tone(659,.9,.018,"sine",.14);
+  tone(784,1.0,.014,"sine",.28);
 }
 
 function successJingle(){
-  playNotes([523,659,784],.16);
+  playNotes([392,523,659],.22);
 }
 
 function clearTimers(){
@@ -142,6 +182,31 @@ function clearTimers(){
 function renderChoices(){
   const wrap = $("stepChoices");
   wrap.innerHTML = "";
+
+  $("selectTitle").textContent = selectedMode === "care"
+    ? "これからの ながれを みよう"
+    : "どれから やる？";
+
+  const forecast = $("careForecast");
+  forecast.hidden = selectedMode !== "care";
+
+  if(selectedMode === "care"){
+    const list = $("forecastList");
+    list.innerHTML = "";
+    steps.forEach((s,index)=>{
+      const item = document.createElement("div");
+      const done = completed.has(index);
+      item.className = "forecastItem" + (done ? " done" : "");
+      item.textContent = `${done ? "✅" : "○"} ${index+1}. ${s.main}`;
+      list.appendChild(item);
+    });
+
+    const remaining = steps.length - completed.size;
+    $("currentGuide").textContent = remaining
+      ? `つぎは、したい こうていを 1つ えらびます。あと ${remaining}こです。`
+      : "ぜんぶ できました";
+  }
+
   steps.forEach((s,index)=>{
     const b = document.createElement("button");
     const done = completed.has(index);
@@ -151,6 +216,7 @@ function renderChoices(){
     b.onclick = ()=>startSelectedStep(index);
     wrap.appendChild(b);
   });
+
   const remaining = steps.length - completed.size;
   $("remainingText").textContent = remaining ? `あと ${remaining}こ` : "ぜんぶ できた！";
   $("stars").textContent = "★".repeat(completed.size) + "☆".repeat(steps.length-completed.size);
@@ -158,9 +224,7 @@ function renderChoices(){
 
 function updateStep(){
   const s = steps[currentStep];
-  $("stepText").textContent = selectedMode==="care"
-    ? `できた ${completed.size} / ${steps.length}`
-    : `${currentStep+1} / ${steps.length}`;
+  $("stepText").textContent = `できた ${completed.size} / ${steps.length}`;
   $("emoji").textContent = s.emoji;
   $("mainText").textContent = s.main;
   $("subText").textContent = s.sub;
@@ -179,7 +243,7 @@ function beginStepFlow(){
   $("emoji").classList.add("demoMove");
   const s = steps[currentStep];
   speak(`おとを きいてね。${s.main}。${s.sub}`);
-  playNotes(s.notes, selectedMode==="care" ? .78 : .58);
+  playNotes(s.notes, selectedMode==="care" ? .95 : .72);
   const delay = selectedMode==="care" ? 6500 : 5000;
   flowTimer = setTimeout(startCountdown,delay);
 }
@@ -212,8 +276,8 @@ function startCountdown(){
 function startRhythmLoop(){
   stopRhythm();
   const s = steps[currentStep];
-  playNotes(s.notes, selectedMode==="care" ? .82 : .6);
-  const interval = selectedMode==="care" ? 3600 : 2700;
+  playNotes(s.notes, selectedMode==="care" ? .95 : .72);
+  const interval = selectedMode==="care" ? 4200 : 3200;
   rhythmTimer = setInterval(()=>playNotes(s.notes, selectedMode==="care" ? .82 : .6),interval);
 }
 
@@ -226,10 +290,11 @@ function completeCurrentStep(){
   successJingle();
   speak("できたね");
 
+  completed.add(currentStep);
+
   if(selectedMode === "normal"){
     $("nextBtn").classList.add("show");
   }else{
-    completed.add(currentStep);
     flowTimer = setTimeout(()=>{
       if(completed.size >= steps.length){
         finishAll();
@@ -243,13 +308,12 @@ function completeCurrentStep(){
 
 function goNextNormal(){
   $("nextBtn").classList.remove("show");
-  currentStep++;
-  if(currentStep >= steps.length){
+  completed.add(currentStep);
+  if(completed.size >= steps.length){
     finishAll();
   }else{
-    progressValue=0;
-    updateStep();
-    beginStepFlow();
+    renderChoices();
+    show("selectScreen");
   }
 }
 
@@ -266,6 +330,9 @@ function startSelectedStep(index){
   progressValue = 0;
   show("play");
   updateStep();
+  if(selectedMode === "care"){
+    speak(`いまから、${steps[index].main}を します`);
+  }
   beginStepFlow();
 }
 
@@ -303,14 +370,8 @@ $("again").onclick = ()=>{
   currentStep = 0;
   progressValue = 0;
   startBgm();
-  if(selectedMode==="care"){
-    renderChoices();
-    show("selectScreen");
-  }else{
-    show("play");
-    updateStep();
-    beginStepFlow();
-  }
+  renderChoices();
+  show("selectScreen");
 };
 
 $("startCamera").onclick = async()=>{
@@ -353,15 +414,9 @@ $("startCamera").onclick = async()=>{
     $("loading").classList.remove("show");
     startBgm();
 
-    if(selectedMode==="care"){
-      renderChoices();
-      show("selectScreen");
-    }else{
-      currentStep=0;
-      updateStep();
-      show("play");
-      setTimeout(beginStepFlow,500);
-    }
+    completed = new Set();
+    renderChoices();
+    show("selectScreen");
   }catch(error){
     console.error(error);
     $("loading").classList.remove("show");
